@@ -6,11 +6,14 @@ import mongoDbLogo from './images/mongodblogo.PNG'
 import expressLogo from './images/expressLogo.PNG'
 import reactLogo  from './images/reactLogo.png'
 import nodejsLogo from './images/nodejslogo.jpg'
+import LoadingSpinner from './LoadingSpinner'
 import './App.css';
 
 function App() {
   const [count, setCount] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  const [triggerLoading, setTriggerLoading] = useState(false)
 
   const fetchCounter = async() =>{
     try{
@@ -28,27 +31,33 @@ function App() {
   }, [])
 
   const decrement  = async() => {
+    setTriggerLoading(true)
     try{
       const res = await axios.put(`${process.env.REACT_APP_API}/api/counters/dec/${count._id}`)
       setCount(res.data)
+      setTriggerLoading(false)
     }catch(err){
       console.log(err.message)
     }
   }
 
   const increment  = async() => {
+    setTriggerLoading(true)
     try{
       const res = await axios.put(`${process.env.REACT_APP_API}/api/counters/inc/${count._id}`)
       setCount(res.data)
+      setTriggerLoading(false)
     }catch(err){
       console.log(err.message)
     }
   }
 
   const reset = async() => {
+    setTriggerLoading(true)
     try{
       await axios.put(`${process.env.REACT_APP_API}/api/counters/reset/${count._id}`)
       fetchCounter()
+      setTriggerLoading(false)
     }catch(err){
       console.log(err.message)
     }
@@ -57,6 +66,10 @@ function App() {
 
   return (
     <div className="App">
+      {
+        triggerLoading &&
+        <LoadingSpinner />
+      }
       <div className="container">
         <div className="orange-box">
           <h1>Counter App</h1>
